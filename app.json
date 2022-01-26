@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "finanzas-en-pareja",
+    "slug": "finanzas-en-pareja",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "finanzas-en-pareja"
+}

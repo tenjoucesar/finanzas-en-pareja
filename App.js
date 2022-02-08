@@ -5,12 +5,7 @@ import { Button } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AddCostScreen from './Screens/AddCost';
-
-const FinanceScreen = ()  => (
-  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>Finance Screen</Text>
-  </View>
-);
+import SeeFinanceScreen from './Screens/SeeFinance';
 
 const HomeScreen = ({ navigation }) => (
   <View style={styles.container}>
@@ -30,7 +25,7 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="AddCost" component={AddCostScreen} />
-          <Stack.Screen name="Finance" component={FinanceScreen} />
+          <Stack.Screen name="Finance" component={SeeFinanceScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

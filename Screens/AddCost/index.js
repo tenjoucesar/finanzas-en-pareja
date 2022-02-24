@@ -1,19 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Text, View } from 'react-native';
 import { Input, Button, ButtonGroup } from 'react-native-elements';
-import { getDatabase, ref, onValue, set, push, runTransaction } from 'firebase/database';
-import { ListAndContextProvider, ListAndCostsContext } from '../../Providers/listAndCostsProvider';
-
-function commaFormatCurrency(input) {
-  if (!input) {
-    return '';
-  }
-  return `₡${input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
-}
-
-function getInputValueWithoutCurrency(value) {
-  return Number(value.replace('₡', '').replaceAll(',', ''));
-}
+import { ListAndCostsContext } from 'providers/listAndCostsProvider';
+import { commaFormatCurrency, getInputValueWithoutCurrency } from 'utils/currency';
 
 const PERSON_MAP = {
   0: 'cesar',
@@ -26,16 +15,12 @@ const CATEGORY_MAP = {
   2: 'gastos casa',
   3: 'salida a comer',
   4: 'otro'
-}
+};
 
-// Component/Firebase Pending Stuff
-//Set lastCost on list.
-//Move this into a provider/Pending Stuff.
+
 //Clean input after submit
-//Add category & description
-//Write batch when upload cost.
+
 //Refactor.
-//Move input utils into a util file
 
 const AddCostScreen = () => {
   const [selectedPerson, setSelectedPerson] = useState(0);
@@ -43,8 +28,7 @@ const AddCostScreen = () => {
   const [description, setDescription] = useState(undefined);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [cost, setCost] = useState(undefined);
-  const { activeList } = useContext(ListAndCostsContext)
-  const db =  getDatabase();
+  const { postCost } = useContext(ListAndCostsContext);
 
   const handleKeyPress = (e) => {
     const inputValue = getInputValueWithoutCurrency(e.target.value);
@@ -54,19 +38,16 @@ const AddCostScreen = () => {
     e.target.value = commaFormatCurrency(inputValue);
   }
 
-  const submitCost = () => {
-    const costs = {
-      amount: cost,
-      category: CATEGORY_MAP[category],
-      description: description,
-      timestamp: Date.now()
-    }
-    debugger;
-    const user = PERSON_MAP[selectedPerson];
-    const costRef = ref(db, 'costs/' + activeList + `/${user}`);
-    //Push to create a new obj
-    push(costRef, costs);
-  }
+  const buildCostObj = () => ({
+    amount: cost,
+    category: CATEGORY_MAP[category],
+    description: description,
+    createdAt: Date.now(),
+    owner: PERSON_MAP[selectedPerson],
+  });
+
+  const submitCost = () => postCost(buildCostObj());
+
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

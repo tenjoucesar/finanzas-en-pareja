@@ -1,14 +1,14 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Button } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AddCostScreen from './Screens/AddCost';
-import SeeFinanceScreen from './Screens/SeeFinance';
+import AddCostScreen from 'screens/AddCost';
+import SeeFinanceScreen from 'screens/SeeFinance';
+import HomeScreen from 'screens/Home';
+import SeeCostsScreen from 'screens/SeeCosts';
 import { initializeApp } from 'firebase/app';
-import { ListAndCostsProvider } from './Providers/listAndCostsProvider';
-//Peding firebase config
+import { ListAndCostsProvider } from 'providers/listAndCostsProvider';
+
 initializeApp({
   apiKey: 'api-key',
   authDomain: 'project-id.firebaseapp.com',
@@ -20,14 +20,6 @@ initializeApp({
   measurementId: 'G-measurement-id',
 });
 
-const HomeScreen = ({ navigation }) => (
-  <View style={styles.container}>
-    <View>
-      <Button title='Ver Finanzas' onPress={() => navigation.navigate('Finance')} />
-      <Button title='Agregar gasto' onPress={() => navigation.navigate('AddCost')} />
-    </View>
-  </View>
-);
 
 const Stack = createNativeStackNavigator();
 
@@ -40,18 +32,10 @@ export default function App() {
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="AddCost" component={AddCostScreen} />
             <Stack.Screen name="Finance" component={SeeFinanceScreen} />
+            <Stack.Screen name="SeeCosts" component={SeeCostsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
     </ListAndCostsProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

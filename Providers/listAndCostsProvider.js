@@ -20,7 +20,6 @@ export const ListAndCostsProvider = ({ children }) => {
   const [activeListID, setActiveListID] = useState(undefined);
   const [activeListCosts, setActiveListCosts] = useState(undefined);
 
-  const [lists, setLists] = useState()
   const [db] = useState(getFirestore());
 
   useEffect(async () => {
@@ -44,17 +43,22 @@ export const ListAndCostsProvider = ({ children }) => {
     const listsRef = doc(collection(db, 'lists'));
     const listOfCostsId = listsRef.id;
 
+    // Create new list
     batch.set(listsRef, {
       active : true,
       createdAt : Date.now(),
       id: listOfCostsId,
     });
-
+    // Create new costs list
     const costsRef = doc(db, 'costs', listOfCostsId);
     batch.set(costsRef, {});
 
+    // Update current list to set it as inactive
+    const activeListRef = doc(db, 'lists', activeListID);
+    batch.update(activeListRef, { active: false });
     await batch.commit();
-    setActiveListID(listOfCostsId);
+    // setActiveListID(listOfCostsId);
+    requestAndStoreActiveList();
   }
 
   const createNewListAndAssignID = () => {

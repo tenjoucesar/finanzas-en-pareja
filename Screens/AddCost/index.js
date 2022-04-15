@@ -17,16 +17,12 @@ const CATEGORY_MAP = {
   4: 'otro'
 };
 
-
-//Clean input after submit
-
-//Refactor.
-
 const AddCostScreen = () => {
   const [selectedPerson, setSelectedPerson] = useState(0);
   const [category, setCategory] = useState(0);
-  const [description, setDescription] = useState(undefined);
+  const [description, setDescription] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [cost, setCost] = useState(undefined);
   const { postCost } = useContext(ListAndCostsContext);
 
@@ -36,7 +32,7 @@ const AddCostScreen = () => {
     setButtonDisabled(disableButton)
     setCost(inputValue);
     e.target.value = commaFormatCurrency(inputValue);
-  }
+  };
 
   const buildCostObj = () => ({
     amount: cost,
@@ -46,11 +42,33 @@ const AddCostScreen = () => {
     owner: PERSON_MAP[selectedPerson],
   });
 
-  const submitCost = () => postCost(buildCostObj());
+  const cleanFormValues = () => {
+    setDescription('');
+    setCost('');
+    setCategory(0);
+  };
 
+  const renderSuccessMessage = () => {
+    setShowSuccessMessage(true);
+    const timer = setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  };
+
+  const submitCost = async () => {
+    await postCost(buildCostObj());
+    renderSuccessMessage();
+    cleanFormValues();
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      {/* Pending Work
+        - Styling
+        - Add a green check at Success Message.
+      */}
+      {showSuccessMessage && <Text>Costo agregado exitosamente.</Text>}
       <Text>Agregar gasto</Text>
       <Text>El gasto lo pago</Text>
       <ButtonGroup
@@ -70,12 +88,14 @@ const AddCostScreen = () => {
         placeholder="Agrega la descripcion"
         leftIcon={{ type: 'font-awesome', name: 'comment' }}
         onChange={(e) => setDescription(e.target.value)}
+        value={description}
       />
       <Input
         placeholder="Agrega el gasto"
         leftIcon={{ type: 'font-awesome', name: 'money' }}
         keyboardType='number-pad'
         onChange={(value) => handleKeyPress(value)}
+        value={commaFormatCurrency(cost)}
       />
       <Button title='Guardar costo' disabled={buttonDisabled} onPress={() => submitCost()}/>
     </View>
